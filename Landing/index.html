@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anclora Render - Genera Componentes con IA</title>
+    <meta name="description" content="La herramienta AI-powered que genera componentes web en React, Vue, Angular en segundos. Gratis para empezar.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2314919B'><circle cx='12' cy='12' r='10'/></svg>">
+    <style>
+        /* Variables CSS */
+        :root {
+            --brand-700: #213A57;
+            --brand-600: #0B6477;
+            --brand-500: #14919B;
+            --brand-400: #0AD1C8;
+            --brand-300: #45DFB1;
+            --brand-200: #80ED99;
+            --gradient-ocean: linear-gradient(120deg, #80ED99 0%, #45DFB1 22%, #0AD1C8 45%, #14919B 65%, #0B6477 82%, #213A57 100%);
+            
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F8FAFC;
+            --text-primary: #0F172A;
+            --text-secondary: #334155;
+            --text-muted: #64748B;
+            --border: #E2E8F0;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0D1117;
+            --bg-secondary: #161B22;
+            --text-primary: #F8FAFC;
+            --text-secondary: #E2E8F0;
+            --text-muted: #94A3B8;
+            --border: #30363D;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            background: rgba(248, 250, 252, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+            padding: 1rem 0;
+        }
+
+        [data-theme="dark"] header {
+            background: rgba(13, 17, 23, 0.8);
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--brand-600);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--brand-600);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .lang-toggle {
+            background: none;
+            border: 1px solid var(--border);
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 6rem 0 4rem;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(10, 209, 200, 0.1), rgba(69, 223, 177, 0.05));
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-ocean);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+
+        .btn {
+            padding: 0.875rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--brand-600);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--brand-700);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--brand-600);
+            border: 2px solid var(--brand-400);
+        }
+
+        .btn-outline:hover {
+            background: var(--brand-400);
+            color: white;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--brand-600);
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        /* Features */
+        .features {
+            padding: 6rem 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-ocean);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        /* Comparison */
+        .comparison {
+            padding: 6rem 0;
+            background: var(--bg-secondary);
+        }
+
+        .comparison-table {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px var(--shadow);
+        }
+
+        .comparison-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--gradient-ocean);
+            color: white;
+            font-weight: 600;
+        }
+
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            align-items: center;
+        }
+
+        .check-icon {
+            color: #10B981;
+            font-weight: bold;
+        }
+
+        .x-icon {
+            color: #EF4444;
+            font-weight: bold;
+        }
+
+        /* Pricing */
+        .pricing {
+            padding: 6rem 0;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .pricing-card {
+            background: var(--bg-primary);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .pricing-card.popular {
+            border-color: var(--brand-400);
+            transform: scale(1.05);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gradient-ocean);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .price {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--brand-600);
+            margin: 1rem 0;
+        }
+
+        .price-period {
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-weight: normal;
+        }
+
+        .features-list {
+            list-style: none;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .features-list li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* CTA Final */
+        .final-cta {
+            padding: 6rem 0;
+            background: var(--gradient-ocean);
+            color: white;
+            text-align: center;
+        }
+
+        .final-cta h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .final-cta p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-secondary);
+            padding: 3rem 0 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            line-height: 2;
+        }
+
+        .footer-links a:hover {
+            color: var(--brand-600);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .footer-social a {
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+
+        .footer-social a:hover {
+            color: var(--brand-600);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .hero-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-header,
+            .comparison-row {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card.popular {
+                transform: none;
+            }
+
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        /* Ocultar contenido por idioma */
+        .lang-en {
+            display: none;
+        }
+
+        [data-lang="en"] .lang-es {
+            display: none;
+        }
+
+        [data-lang="en"] .lang-en {
+            display: block;
+        }
+    </style>
+</head>
+<body data-theme="light" data-lang="es">
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M8 12h8M12 8v8" stroke="white" stroke-width="2"/>
+                </svg>
+                Anclora Render
+            </div>
+            
+            <ul class="nav-links">
+                <li><a href="#features" class="lang-es">Características</a><a href="#features" class="lang-en">Features</a></li>
+                <li><a href="#comparison" class="lang-es">Comparación</a><a href="#comparison" class="lang-en">Comparison</a></li>
+                <li><a href="#pricing" class="lang-es">Precios</a><a href="#pricing" class="lang-en">Pricing</a></li>
+                <li><a href="#contact" class="lang-es">Contacto</a><a href="#contact" class="lang-en">Contact</a></li>
+            </ul>
+
+            <div class="nav-actions">
+                <button class="lang-toggle" onclick="toggleLanguage()">
+                    <span class="lang-es">EN</span>
+                    <span class="lang-en">ES</span>
+                </button>
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <span class="theme-light">🌙</span>
+                    <span class="theme-dark">☀️</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <h1>
+                    <span class="lang-es">Genera Componentes<br>con IA en Segundos</span>
+                    <span class="lang-en">Generate Components<br>with AI in Seconds</span>
+                </h1>
+                
+                <p>
+                    <span class="lang-es">La herramienta AI-powered que convierte tus ideas en componentes de React, Vue y Angular listos para producción. Sin configuración, sin complicaciones.</span>
+                    <span class="lang-en">The AI-powered tool that turns your ideas into production-ready React, Vue, and Angular components. No setup, no hassle.</span>
+                </p>
+
+                <div class="hero-actions">
+                    <a href="#" class="btn btn-primary">
+                        <span class="lang-es">Prueba Gratis</span>
+                        <span class="lang-en">Try Free</span>
+                    </a>
+                    <a href="#" class="btn btn-outline">
+                        <span class="lang-es">Ver Demo</span>
+                        <span class="lang-en">Watch Demo</span>
+                    </a>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-number">10x</div>
+                        <div class="stat-label">
+                            <span class="lang-es">Más Rápido</span>
+                            <span class="lang-en">Faster</span>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">5K+</div>
+                        <div class="stat-label">
+                            <span class="lang-es">Desarrolladores</span>
+                            <span class="lang-en">Developers</span>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">99%</div>
+                        <div class="stat-label">
+                            <span class="lang-es">Satisfacción</span>
+                            <span class="lang-en">Satisfaction</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="features">
+            <div class="container">
+                <div class="section-header">
+                    <h2>
+                        <span class="lang-es">¿Por qué Anclora Render?</span>
+                        <span class="lang-en">Why Anclora Render?</span>
+                    </h2>
+                    <p>
+                        <span class="lang-es">Todo lo que necesitas para acelerar tu desarrollo frontend</span>
+                        <span class="lang-en">Everything you need to accelerate your frontend development</span>
+                    </p>
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🤖</div>
+                        <h3>
+                            <span class="lang-es">IA Avanzada</span>
+                            <span class="lang-en">Advanced AI</span>
+                        </h3>
+                        <p>
+                            <span class="lang-es">Genera componentes perfectos con solo describir lo que necesitas</span>
+                            <span class="lang-en">Generate perfect components by just describing what you need</span>
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h3>
+                            <span class="lang-es">Setup en Segundos</span>
+                            <span class="lang-en">Setup in Seconds</span>
+                        </h3>
+                        <p>
+                            <span class="lang-es">Sin configuración. Empieza a generar componentes inmediatamente</span>
+                            <span class="lang-en">No configuration. Start generating components immediately</span>
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h3>
+                            <span class="lang-es">Multi-Framework</span>
+                            <span class="lang-en">Multi-Framework</span>
+                        </h3>
+                        <p>
+                            <span class="lang-es">Soporte completo para React, Vue, Angular y más</span>
+                            <span class="lang-en">Full support for React, Vue, Angular and more</span>
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🎨</div>
+                        <h3>
+                            <span class="lang-es">Design Systems</span>
+                            <span class="lang-en">Design Systems</span>
+                        </h3>
+                        <p>
+                            <span class="lang-es">Componentes consistentes con tu design system personalizado</span>
+                            <span class="lang-en">Consistent components with your custom design system</span>
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🔍</div>
+                        <h3>
+                            <span class="lang-es">Testing Visual</span>
+                            <span class="lang-en">Visual Testing</span>
+                        </h3>
+                        <p>
+                            <span class="lang-es">Validación automática y testing de regresión visual</span>
+                            <span class="lang-en">Automatic validation and visual regression testing</span>
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🚀</div>
+                        <h3>
+                            <span class="lang-es">Listo para Producción</span>
+                            <span class="lang-en">Production Ready</span>
+                        </h3>
+                        <p>
+                            <span class="lang-es">Código optimizado y listo para usar en tus proyectos</span>
+                            <span class="lang-en">Optimized code ready to use in your projects</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparison Section -->
+        <section id="comparison" class="comparison">
+            <div class="container">
+                <div class="section-header">
+                    <h2>
+                        <span class="lang-es">Comparación con Alternativas</span>
+                        <span class="lang-en">Comparison with Alternatives</span>
+                    </h2>
+                    <p>
+                        <span class="lang-es">Ve por qué Anclora Render es la mejor opción</span>
+                        <span class="lang-en">See why Anclora Render is the best choice</span>
+                    </p>
+                </div>
+
+                <div class="comparison-table">
+                    <div class="comparison-header">
+                        <div>
+                            <span class="lang-es">Característica</span>
+                            <span class="lang-en">Feature</span>
+                        </div>
+                        <div>Anclora Render</div>
+                        <div>Storybook</div>
+                        <div>Figma Dev</div>
+                    </div>
+
+                    <div class="comparison-row">
+                        <div>
+                            <span class="lang-es">Setup en segundos</span>
+                            <span class="lang-en">Setup in seconds</span>
+                        </div>
+                        <div class="check-icon">✓</div>
+                        <div class="x-icon">✗</div>
+                        <div class="x-icon">✗</div>
+                    </div>
+
+                    <div class="comparison-row">
+                        <div>
+                            <span class="lang-es">Generación con IA</span>
+                            <span class="lang-en">AI Generation</span>
+                        </div>
+                        <div class="check-icon">✓</div>
+                        <div class="x-icon">✗</div>
+                        <div class="x-icon">✗</div>
+                    </div>
+
+                    <div class="comparison-row">
+                        <div>
+                            <span class="lang-es">Multi-framework</span>
+                            <span class="lang-en">Multi-framework</span>
+                        </div>
+                        <div class="check-icon">✓</div>
+                        <div class="check-icon">✓</div>
+                        <div class="x-icon">✗</div>
+                    </div>
+
+                    <div class="comparison-row">
+                        <div>
+                            <span class="lang-es">Testing visual</span>
+                            <span class="lang-en">Visual testing</span>
+                        </div>
+                        <div class="check-icon">✓</div>
+                        <div class="check-icon">✓</div>
+                        <div class="x-icon">✗</div>
+                    </div>
+
+                    <div class="comparison-row">
+                        <div>
+                            <span class="lang-es">Precio inicial</span>
+                            <span class="lang-en">Starting price</span>
+                        </div>
+                        <div>
+                            <span class="lang-es">Gratis</span>
+                            <span class="lang-en">Free</span>
+                        </div>
+                        <div>
+                            <span class="lang-es">Gratis</span>
+                            <span class="lang-en">Free</span>
+                        </div>
+                        <div>$12/mes</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Section -->
+        <section id="pricing" class="pricing">
+            <div class="container">
+                <div class="section-header">
+                    <h2>
+                        <span class="lang-es">Precios Simples y Transparentes</span>
+                        <span class="lang-en">Simple and Transparent Pricing</span>
+                    </h2>
+                    <p>
+                        <span class="lang-es">Elige el plan perfecto para tu equipo</span>
+                        <span class="lang-en">Choose the perfect plan for your team</span>
+                    </p>
+                </div>
+
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <h3>
+                            <span class="lang-es">Gratuito</span>
+                            <span class="lang-en">Free</span>
+                        </h3>
+                        <div class="price">$0<span class="price-period">/mes</span></div>
+                        <ul class="features-list">
+                            <li><span class="check-icon">✓</span> 
+                                <span class="lang-es">3 design systems</span>
+                                <span class="lang-en">3 design systems</span>
+                            </li>
+                            <li><span class="check-icon">✓</span> 
+                                <span class="lang-es">Librería completa</span>
+                                <span class="lang-en">Complete library</span>
+                            </li>
+                            <li><span class="check-icon">✓</span> 
+                                <span class="lang-es">Export básico</span>
+                                <span class="lang-en">Basic export</span>
+                            </li>
+                            <li><span class="check-icon">✓</span> 
+                                <span class="lang-es">Soporte comunidad</span>
+                                <span class="lang-en">Community support</span>
+                            </li>
+                        </ul>
+                        <a href="#" class="btn btn-outline">
+                            <span class="lang-es">Empezar Gratis</span>
+                            <span class="lang-en">Start Free</span>
+                        </a>
+                    </div>
+
+                    <div class="pricing-card popular">
+                        <div class="popular-badge">
+                            <span class="lang-es">Más Popular</span>
+                            <span class="lang-en">Most Popular</span>
+                        </div>
+                        <h3>Pro</h3>
+                        <div class="price">$19<span class="price-period">/mes</span></div>
+                        <ul class="features-list">
+                            <li><span class="check-icon">✓</span> 
+                                <span class="lang-es">Design systems ilimitados</span>
+                                <span class="lang-en">Unlimited design systems</span>
+                            </li>
+                            <li><span class="check-icon">✓</span> 
+                                <span class="lang-es">Testing visual</span>
+                                <span class="lang-en">Visual testing</span>
+                            </li>
+                            <li><span class="check-icon">✓</span> 
+                                <span class="lang-es">Colaboración en equipo</span>
+                                <span class="lang-en">Team collaboration</span>
+                            </li>
+                            <li><span class="check-icon">✓</span> 
+                                <span class="lang-es">Soporte prioritario</span>
+                                <span class="lang-en">Priority support</span>
+                            </li>
+                        </ul>
+                        <a href="#" class="btn btn-primary">
+                            <span class="lang-es">Empezar Prueba</span>
+                            <span class="lang-en">Start Trial</span>
+                        </a>
+                    </div>
+
+                    <div class="pricing-card">
+                        <h3>Enterprise</h3>
+                        <div class="price">$199<span class="price-period">/mes</span></div>
+                        <ul class="features-list">
+                            <li><span class="check-icon">✓</span> White-label</li>
+                            <li><span class="check-icon">✓</span> SSO + 
+                                <span class="lang-es">seguridad avanzada</span>
+                                <span class="lang-en">advanced security</span>
+                            </li>
+                            <li><span class="check-icon">✓</span> 
+                                <span class="lang-es">Integraciones personalizadas</span>
+                                <span class="lang-en">Custom integrations</span>
+                            </li>
+                            <li><span class="check-icon">✓</span> 
+                                <span class="lang-es">Soporte dedicado</span>
+                                <span class="lang-en">Dedicated support</span>
+                            </li>
+                        </ul>
+                        <a href="#" class="btn btn-outline">
+                            <span class="lang-es">Contactar Ventas</span>
+                            <span class="lang-en">Contact Sales</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final CTA -->
+        <section class="final-cta">
+            <div class="container">
+                <h2>
+                    <span class="lang-es">¿Listo para Acelerar tu Desarrollo?</span>
+                    <span class="lang-en">Ready to Accelerate Your Development?</span>
+                </h2>
+                <p>
+                    <span class="lang-es">Únete a miles de desarrolladores que ya están creando componentes 10x más rápido</span>
+                    <span class="lang-en">Join thousands of developers already creating components 10x faster</span>
+                </p>
+                <div class="hero-actions">
+                    <a href="#" class="btn btn-primary" style="background: white; color: var(--brand-600);">
+                        <span class="lang-es">Empezar Gratis Ahora</span>
+                        <span class="lang-en">Start Free Now</span>
+                    </a>
+                    <a href="#" class="btn btn-outline" style="border-color: rgba(255,255,255,0.3); color: white;">
+                        <span class="lang-es">Hablar con Ventas</span>
+                        <span class="lang-en">Talk to Sales</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>
+                        <span class="lang-es">Producto</span>
+                        <span class="lang-en">Product</span>
+                    </h4>
+                    <ul class="footer-links">
+                        <li><a href="#">
+                            <span class="lang-es">Características</span>
+                            <span class="lang-en">Features</span>
+                        </a></li>
+                        <li><a href="#">
+                            <span class="lang-es">Precios</span>
+                            <span class="lang-en">Pricing</span>
+                        </a></li>
+                        <li><a href="#">
+                            <span class="lang-es">Integraciones</span>
+                            <span class="lang-en">Integrations</span>
+                        </a></li>
+                        <li><a href="#">API</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>
+                        <span class="lang-es">Recursos</span>
+                        <span class="lang-en">Resources</span>
+                    </h4>
+                    <ul class="footer-links">
+                        <li><a href="#">
+                            <span class="lang-es">Documentación</span>
+                            <span class="lang-en">Documentation</span>
+                        </a></li>
+                        <li><a href="#">
+                            <span class="lang-es">Tutoriales</span>
+                            <span class="lang-en">Tutorials</span>
+                        </a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">
+                            <span class="lang-es">Comunidad</span>
+                            <span class="lang-en">Community</span>
+                        </a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>
+                        <span class="lang-es">Empresa</span>
+                        <span class="lang-en">Company</span>
+                    </h4>
+                    <ul class="footer-links">
+                        <li><a href="#">
+                            <span class="lang-es">Sobre nosotros</span>
+                            <span class="lang-en">About us</span>
+                        </a></li>
+                        <li><a href="#">
+                            <span class="lang-es">Carreras</span>
+                            <span class="lang-en">Careers</span>
+                        </a></li>
+                        <li><a href="#">
+                            <span class="lang-es">Contacto</span>
+                            <span class="lang-en">Contact</span>
+                        </a></li>
+                        <li><a href="#">
+                            <span class="lang-es">Prensa</span>
+                            <span class="lang-en">Press</span>
+                        </a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>
+                        <span class="lang-es">Legal</span>
+                        <span class="lang-en">Legal</span>
+                    </h4>
+                    <ul class="footer-links">
+                        <li><a href="#">
+                            <span class="lang-es">Privacidad</span>
+                            <span class="lang-en">Privacy</span>
+                        </a></li>
+                        <li><a href="#">
+                            <span class="lang-es">Términos</span>
+                            <span class="lang-en">Terms</span>
+                        </a></li>
+                        <li><a href="#">
+                            <span class="lang-es">Cookies</span>
+                            <span class="lang-en">Cookies</span>
+                        </a></li>
+                        <li><a href="#">
+                            <span class="lang-es">Seguridad</span>
+                            <span class="lang-en">Security</span>
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div>
+                    <p>&copy; 2025 Anclora Render. 
+                        <span class="lang-es">Todos los derechos reservados.</span>
+                        <span class="lang-en">All rights reserved.</span>
+                    </p>
+                </div>
+                <div class="footer-social">
+                    <a href="https://twitter.com/anclora" aria-label="Twitter">𝕏</a>
+                    <a href="https://github.com/anclora" aria-label="GitHub">GitHub</a>
+                    <a href="https://discord.gg/anclora" aria-label="Discord">Discord</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle de idioma
+        function toggleLanguage() {
+            const currentLang = document.body.getAttribute('data-lang');
+            const newLang = currentLang === 'es' ? 'en' : 'es';
+            document.body.setAttribute('data-lang', newLang);
+            
+            // Guardar preferencia
+            localStorage.setItem('anclora-lang', newLang);
+        }
+
+        // Toggle de tema
+        function toggleTheme() {
+            const currentTheme = document.body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.body.setAttribute('data-theme', newTheme);
+            
+            // Actualizar display de iconos de tema
+            document.querySelector('.theme-light').style.display = newTheme === 'light' ? 'inline' : 'none';
+            document.querySelector('.theme-dark').style.display = newTheme === 'dark' ? 'inline' : 'none';
+            
+            // Guardar preferencia
+            localStorage.setItem('anclora-theme', newTheme);
+        }
+
+        // Cargar preferencias guardadas
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar idioma
+            const savedLang = localStorage.getItem('anclora-lang') || 'es';
+            document.body.setAttribute('data-lang', savedLang);
+            
+            // Cargar tema
+            const savedTheme = localStorage.getItem('anclora-theme') || 'light';
+            document.body.setAttribute('data-theme', savedTheme);
+            
+            // Actualizar display de iconos de tema
+            document.querySelector('.theme-light').style.display = savedTheme === 'light' ? 'inline' : 'none';
+            document.querySelector('.theme-dark').style.display = savedTheme === 'dark' ? 'inline' : 'none';
+            
+            // Smooth scroll para enlaces internos
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+
+        // Detectar preferencias del sistema
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches && !localStorage.getItem('anclora-theme')) {
+            document.body.setAttribute('data-theme', 'dark');
+        }
+
+        // Detectar idioma del navegador
+        if (!localStorage.getItem('anclora-lang')) {
+            const browserLang = navigator.language || navigator.userLanguage;
+            if (browserLang.startsWith('en')) {
+                document.body.setAttribute('data-lang', 'en');
+            }
+        }
+    </script>
+</body>
+</html>
