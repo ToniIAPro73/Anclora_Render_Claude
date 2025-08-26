@@ -57,10 +57,25 @@
   /* Fallback gradient por si la imagen no carga */
   .fallback-grad{background:var(--grad-ocean-dark)}
   /* Portada: image-set con variantes por espacios/acentos */
-  .cover{color:var(--text-inv);background:url('Fondo_portada_guia.png') center/cover no-repeat}
+  .cover{color:var(--text-inv);background:
+      image-set(
+        url('Propuesta%20s%C3%B3lo%20del%20fondo.png') type("image/png"),
+        url('Propuesta%20solo%20del%20fondo.png') type("image/png"),
+        url('Propuesta%20s%C3%B3lo%20del%20fondo.PNG') type("image/png"),
+        url('Propuesta%20solo%20del%20fondo.PNG') type("image/png"),
+        url('Propuesta%20s%C3%B3lo%20del%20fondo.jpg') type("image/jpeg"),
+        url('Propuesta sólo del fondo.png') type("image/png")
+      ) center/cover no-repeat;
+  }
   .cover::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.32),rgba(0,0,0,.26) 60%,rgba(0,0,0,.22));}
   /* Resto de páginas: mismo archivo, más claro manteniendo el degradado */
-  .bg-ocean{background:url('Fondo_resto_guia.png') center/cover no-repeat}
+  .bg-ocean{background:
+      image-set(
+        url('Propuesta%20s%C3%B3lo%20del%20fondo.png') type("image/png"),
+        url('Propuesta%20solo%20del%20fondo.png') type("image/png"),
+        url('Propuesta sólo del fondo.png') type("image/png")
+      ) center/cover no-repeat;
+  }
   .bg-ocean::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(255,255,255,.88));}
 
   /* Lockup superior izquierda en portada */
@@ -121,6 +136,10 @@
 </style>
 </head>
 <body>
+  <!-- Precarga de imagen de fondo (varias rutas) -->
+  <img src="Propuesta%20s%C3%B3lo%20del%20fondo.png" alt="" style="display:none"/>
+  <img src="Propuesta sólo del fondo.png" alt="" style="display:none"/>
+
   <div class="toolbar">
     <button class="lang-btn" id="btnES">ES</button>
     <button class="lang-btn" id="btnEN">EN</button>
